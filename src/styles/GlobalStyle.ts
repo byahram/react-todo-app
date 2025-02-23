@@ -14,17 +14,17 @@ const GlobalStyle = createGlobalStyle`
   body {
     width: 100vw;
     height: 100vh;
-    background-color: #e5e7eb;
-    color: #213547;
+    background-color: #F8F3D9;
+    color: #504B38;
   }
   
   a {
     font-weight: 500;
-    color: #646cff;
+    color: #B9B28A;
     text-decoration: none;
   }
   a:hover {
-    color: #535bf2;
+    color: #EBE5C2;
   }
   
   h1 {
@@ -38,26 +38,26 @@ const GlobalStyle = createGlobalStyle`
     padding: 0.6em 1.2em;
     font-size: 1em;
     font-weight: 500;
-    background-color: #1a1a1a;
+    background-color: #B9B28A;
     cursor: pointer;
     transition: border-color 0.25s;
   }
   button:hover {
-    border-color: #646cff;
+    border-color: #EBE5C2;
   }
   
-  @media (prefers-color-scheme: light) {
+  /* @media (prefers-color-scheme: light) {
     :root {
-      color: #213547;
-      background-color: #ffffff;
+      color: #B9B28A;
+      background-color: #F8F3D9;
     }
     a:hover {
-      color: #747bff;
+      color: #EBE5C2;
     }
     button {
-      background-color: #f9f9f9;
+      background-color: #B9B28A;
     }
-  }
+  } */
 `;
 
 export default GlobalStyle;
