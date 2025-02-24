@@ -20,6 +20,8 @@ interface TodoStore {
   sort: "new" | "old";
   filter: "all" | "todo" | "doing" | "done" | "pending";
   addCategory: (newCategory: Category) => void;
+  editCategory: (id: number, newValue: string) => void;
+  deleteCategory: (id: number) => void;
 }
 
 export const useTodoStore = create<TodoStore>()(
@@ -66,9 +68,20 @@ export const useTodoStore = create<TodoStore>()(
       sort: "new",
       filter: "all",
 
+      // categories
       addCategory: (newCategory: Category) =>
         set((state) => ({
           categories: [...state.categories, newCategory],
+        })),
+      editCategory: (id: number, newValue: string) =>
+        set((state) => ({
+          categories: state.categories.map((cate) =>
+            cate.id === id ? { ...cate, value: newValue } : cate
+          ),
+        })),
+      deleteCategory: (id: number) =>
+        set((state) => ({
+          categories: state.categories.filter((cate) => cate.id !== id),
         })),
     }),
     {
