@@ -1,18 +1,21 @@
 import React from "react";
 import styled from "styled-components";
 import { CateContainer } from "../components/category/CateContainer";
+import { TodoContainer } from "../components/todo/TodoContainer";
 
 const TodoPage: React.FC = () => {
   return (
-    <TodoContainer>
+    <Wrapper>
       <CateContainer />
-    </TodoContainer>
+      <TodoContainer />
+    </Wrapper>
   );
 };
 
 export default TodoPage;
 
-const TodoContainer = styled.div`
+const Wrapper = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
+  height: 100%;
 `;

@@ -15,6 +15,7 @@ export const CateContainer = () => {
 
 const CateWrapper = styled.div`
   width: 15%;
+  height: fit-content;
   padding: 20px;
   background: #f1f3f5;
   border-right: 2px solid #dee2e6;

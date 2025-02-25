@@ -16,7 +16,7 @@ export const ThemeBtn = () => {
 };
 
 const Button = styled.button`
-  position: absolute;
+  position: fixed;
   top: 1.5rem;
   right: 1.5rem;
   width: 50px;

@@ -6,25 +6,29 @@ interface Category {
   value: string;
 }
 
-interface Task {
+interface Todo {
   id: number;
   categoryId: number;
   title: string;
-  status: string;
+  status: "todo" | "doing" | "done" | "pending";
 }
 
-interface TodoStore {
+interface TodoStoreProps {
   isDark: boolean;
   categories: Category[];
-  tasks: Task[];
+  todos: Todo[];
   sort: "new" | "old";
   filter: "all" | "todo" | "doing" | "done" | "pending";
+  selectedCategory: number;
   addCategory: (newCategory: Category) => void;
   editCategory: (id: number, newValue: string) => void;
   deleteCategory: (id: number) => void;
+  setSelectedCategory: (id: number) => void;
+  addTodo: (task: Todo) => void;
+  updateTodoStatus: (id: number, status: "todo" | "doing" | "done") => void;
 }
 
-export const useTodoStore = create<TodoStore>()(
+export const useTodoStore = create<TodoStoreProps>()(
   persist(
     (set, get) => ({
       isDark: false,
@@ -33,7 +37,7 @@ export const useTodoStore = create<TodoStore>()(
         { id: 2, value: "카테고리2" },
         { id: 3, value: "카테고리3" },
       ],
-      tasks: [
+      todos: [
         {
           id: 1,
           categoryId: 1,
@@ -44,13 +48,13 @@ export const useTodoStore = create<TodoStore>()(
           id: 2,
           categoryId: 2,
           title: "할일2",
-          status: "todo",
+          status: "doing",
         },
         {
           id: 3,
           categoryId: 3,
           title: "할일3",
-          status: "todo",
+          status: "done",
         },
         {
           id: 4,
@@ -67,6 +71,7 @@ export const useTodoStore = create<TodoStore>()(
       ],
       sort: "new",
       filter: "all",
+      selectedCategory: 1,
 
       // categories
       addCategory: (newCategory: Category) =>
@@ -82,6 +87,19 @@ export const useTodoStore = create<TodoStore>()(
       deleteCategory: (id: number) =>
         set((state) => ({
           categories: state.categories.filter((cate) => cate.id !== id),
+        })),
+      setSelectedCategory: (id: number) => set({ selectedCategory: id }),
+
+      // todos
+      addTodo: (task: Todo) =>
+        set((state) => ({
+          todos: [...state.todos, task],
+        })),
+      updateTodoStatus: (id: number, status: "todo" | "doing" | "done") =>
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo.id === id ? { ...todo, status } : todo
+          ),
         })),
     }),
     {
