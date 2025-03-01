@@ -46,6 +46,16 @@ const Form = styled.form`
     opacity: 1;
     background-color: #e0e0e0;
   }
+
+  @media (max-width: 1024px) {
+    width: max-content;
+    margin-top: 0.5rem;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
 `;
 
 const Input = styled.input`
@@ -55,4 +65,10 @@ const Input = styled.input`
   outline: none;
   background-color: transparent;
   font-size: 0.9rem;
+
+  @media (max-width: 1024px) {
+    width: auto;
+    flex: none;
+    font-size: 0.8rem;
+  }
 `;

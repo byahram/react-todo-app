@@ -18,4 +18,8 @@ const Wrapper = styled.div`
   display: flex;
   gap: 2rem;
   height: 100%;
+
+  @media (max-width: 1024px) {
+    flex-direction: column;
+  }
 `;

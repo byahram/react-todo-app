@@ -26,6 +26,7 @@ const TitleContainer = styled.div`
 
   @media (max-width: 1024px) {
     justify-content: space-between;
+    padding: 0 0 1rem 0;
   }
 `;
 

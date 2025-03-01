@@ -19,61 +19,58 @@ interface TodoStoreProps {
   todos: Todo[];
   sort: "new" | "old";
   filter: "all" | "todo" | "doing" | "done" | "pending";
-  selectedCategory: number;
+  selectedCategory: Category | null;
   addCategory: (newCategory: Category) => void;
   editCategory: (id: number, newValue: string) => void;
   deleteCategory: (id: number) => void;
-  setSelectedCategory: (id: number) => void;
+  setSelectedCategory: (category: Category | null) => void;
   addTodo: (task: Todo) => void;
-  updateTodoStatus: (id: number, status: "todo" | "doing" | "done") => void;
+  updateTodoStatus: (
+    id: number,
+    status: "todo" | "doing" | "done" | "pending"
+  ) => void;
 }
 
 export const useTodoStore = create<TodoStoreProps>()(
   persist(
     (set, get) => ({
       isDark: false,
-      categories: [
-        { id: 1, value: "카테고리1" },
-        { id: 2, value: "카테고리2" },
-        { id: 3, value: "카테고리3" },
-      ],
+      categories: [{ id: 1, value: "Category1" }],
       todos: [
         {
           id: 1,
           categoryId: 1,
-          title: "할일1",
-          status: "todo",
-        },
-        {
-          id: 2,
-          categoryId: 2,
-          title: "할일2",
-          status: "doing",
-        },
-        {
-          id: 3,
-          categoryId: 3,
-          title: "할일3",
-          status: "done",
-        },
-        {
-          id: 4,
-          categoryId: 1,
-          title: "할일1",
-          status: "todo",
-        },
-        {
-          id: 5,
-          categoryId: 3,
-          title: "할일2",
+          title: "Add todos!",
           status: "todo",
         },
       ],
       sort: "new",
       filter: "all",
-      selectedCategory: 1,
+      selectedCategory: { id: 1, value: "Category1" },
+
+      // 상태 리셋 메서드 추가
+      clearStorage: () =>
+        set({
+          isDark: false,
+          categories: [{ id: 1, value: "Category1" }],
+          todos: [
+            {
+              id: 1,
+              categoryId: 1,
+              title: "Add todos!",
+              status: "todo",
+            },
+          ],
+          selectedCategory: { id: 1, value: "Category1" },
+        }),
 
       // categories
+      getCategories: () => {
+        return get().categories;
+      },
+      getCategory: (id: number) => {
+        return get().categories.find((category) => category.id === id);
+      },
       addCategory: (newCategory: Category) =>
         set((state) => ({
           categories: [...state.categories, newCategory],
@@ -88,14 +85,17 @@ export const useTodoStore = create<TodoStoreProps>()(
         set((state) => ({
           categories: state.categories.filter((cate) => cate.id !== id),
         })),
-      setSelectedCategory: (id: number) => set({ selectedCategory: id }),
+      setSelectedCategory: (category) => set({ selectedCategory: category }),
 
       // todos
       addTodo: (task: Todo) =>
         set((state) => ({
           todos: [...state.todos, task],
         })),
-      updateTodoStatus: (id: number, status: "todo" | "doing" | "done") =>
+      updateTodoStatus: (
+        id: number,
+        status: "todo" | "doing" | "done" | "pending"
+      ) =>
         set((state) => ({
           todos: state.todos.map((todo) =>
             todo.id === id ? { ...todo, status } : todo

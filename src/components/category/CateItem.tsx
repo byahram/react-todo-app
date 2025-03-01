@@ -14,7 +14,12 @@ interface CateItemProps {
 }
 
 export const CateItem: React.FC<CateItemProps> = ({ category }) => {
-  const { editCategory, deleteCategory } = useTodoStore();
+  const {
+    editCategory,
+    deleteCategory,
+    setSelectedCategory,
+    selectedCategory,
+  } = useTodoStore();
   const [showMoreBtn, setShowMoreBtn] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [newCategoryValue, setNewCategoryValue] = useState(category.value);
@@ -23,6 +28,10 @@ export const CateItem: React.FC<CateItemProps> = ({ category }) => {
   const handleMouseLeave = () => setShowMoreBtn(false);
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
+
+  const handleSelectCategory = () => {
+    setSelectedCategory(category);
+  };
 
   const handleEdit = () => {
     editCategory(category.id, newCategoryValue);
@@ -37,6 +46,8 @@ export const CateItem: React.FC<CateItemProps> = ({ category }) => {
   return (
     <CateItemWrapper>
       <CategoryItem
+        selected={selectedCategory?.id === category.id}
+        onClick={handleSelectCategory}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -81,10 +92,10 @@ const CateItemWrapper = styled.li`
   /* margin-bottom: 10px; */
 `;
 
-const CategoryItem = styled.div`
+const CategoryItem = styled.div<{ selected?: boolean }>`
   padding: 10px 12px;
   cursor: pointer;
-  background-color: #f0f0f0;
+  background-color: ${({ selected }) => (selected ? "#e0e0e0" : "transparent")};
   border-radius: 5px;
   display: flex;
   align-items: center;
@@ -101,6 +112,15 @@ const CategoryItem = styled.div`
     align-items: center;
     p {
       margin-left: 6px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    > div {
+      p {
+        margin-right: 12px;
+        font-size: 0.9rem;
+      }
     }
   }
 `;
