@@ -1,23 +1,32 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { useTodoStore } from "../../utils/zustand";
+import { TodoInput } from "./TodoInput";
+import { FilteredBtns } from "./FilteredBtns";
+import { useModal } from "../hook/useModal";
+import { Modal } from "../modal/Modal";
 
 export const TodoContainer = () => {
-  const { selectedCategory, todos, addTodo } = useTodoStore();
+  const { selectedCategory, categories, todos, addTodo, updateTodoStatus } =
+    useTodoStore();
   const [inputValue, setInputValue] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [editingId, setEditingId] = useState(null);
+  const [editingValue, setEditingValue] = useState("");
+  const { showModal, handleShowModal, handleCloseModal } = useModal();
 
-  const categoryName = selectedCategory?.value || "N/A";
-
-  const todoList = todos.filter((todo) => todo.status === "todo");
-  const doingList = todos.filter((todo) => todo.status === "doing");
-  const doneList = todos.filter((todo) => todo.status === "done");
-  const pendingList = todos.filter((todo) => todo.status === "pending");
+  const selectedCategoryObj = categories.find(
+    (c) => c.id === selectedCategory?.id
+  );
+  const categoryName = selectedCategoryObj ? selectedCategoryObj.value : "N/A";
+  const newId =
+    todos.length > 0 ? Math.max(...todos.map((todo) => todo.id)) + 1 : 1;
 
   const handleAddTodo = () => {
     if (inputValue.trim() === "") return;
 
     const newTodo = {
-      id: Date.now(),
+      id: newId,
       categoryId: selectedCategory?.id || 1,
       title: inputValue,
       status: "todo",
@@ -27,55 +36,66 @@ export const TodoContainer = () => {
     setInputValue("");
   };
 
+  const handleEditTodo = (id, title) => {
+    setEditingId(id);
+    setEditingValue(title);
+  };
+
+  const handleSaveEdit = (id) => {
+    if (editingValue.trim() === "") return;
+
+    const updatedTodos = todos.map((todo) =>
+      todo.id === id ? { ...todo, title: editingValue } : todo
+    );
+
+    useTodoStore.setState({ todos: updatedTodos });
+    setEditingId(null);
+  };
+
+  const filteredTodos =
+    filter === "all" ? todos : todos.filter((todo) => todo.status === filter);
+
   return (
     <TodoWrapper>
-      <InputWrapper>
-        <TodoInput
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Add a new task"
+      <TodoInput
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        handleAddTodo={handleAddTodo}
+        categoryName={categoryName}
+      />
+
+      <FilteredBtns filter={filter} setFilter={setFilter} />
+
+      <TodoList>
+        {filteredTodos.map((todo) => (
+          <TodoItem key={todo.id}>
+            <TodoCheckbox type="checkbox" />
+            {editingId === todo.id ? (
+              <TodoEditInput
+                type="text"
+                value={editingValue}
+                onChange={(e) => setEditingValue(e.target.value)}
+                onBlur={() => handleSaveEdit(todo.id)}
+                autoFocus
+              />
+            ) : (
+              <TodoText onClick={() => handleEditTodo(todo.id, todo.title)}>
+                {todo.title}
+              </TodoText>
+            )}
+          </TodoItem>
+        ))}
+      </TodoList>
+
+      {/* {showModal && (
+        <Modal
+          newCategoryValue={newCategoryValue}
+          setNewCategoryValue={setNewCategoryValue}
+          handleCloseModal={handleCloseModal}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
         />
-        <AddButton onClick={handleAddTodo}>Save</AddButton>
-      </InputWrapper>
-      <KanbanBoard>
-        <Column>
-          <h3>Todo</h3>
-          {todoList.map((task, index) => (
-            <Task key={index}>
-              <Checkbox type="checkbox" />
-              {task.title}
-            </Task>
-          ))}
-        </Column>
-        <Column>
-          <h3>Doing</h3>
-          {doingList.map((task, index) => (
-            <Task key={index}>
-              <Checkbox type="checkbox" />
-              {task.title}
-            </Task>
-          ))}
-        </Column>
-        <Column>
-          <h3>Done</h3>
-          {doneList.map((task, index) => (
-            <Task key={index}>
-              <Checkbox type="checkbox" />
-              {task.title}
-            </Task>
-          ))}
-        </Column>
-        <Column>
-          <h3>Pending</h3>
-          {pendingList.map((task, index) => (
-            <Task key={index}>
-              <Checkbox type="checkbox" />
-              {task.title}
-            </Task>
-          ))}
-        </Column>
-      </KanbanBoard>
+      )} */}
     </TodoWrapper>
   );
 };
@@ -84,64 +104,53 @@ const TodoWrapper = styled.div`
   width: 100%;
 `;
 
-const InputWrapper = styled.div`
-  display: flex;
-  gap: 8px;
-  margin-bottom: 1rem;
-  height: 2.8rem;
-`;
-
-const TodoInput = styled.input`
-  flex: 1;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-`;
-
-const AddButton = styled.button`
-  padding: 8px 12px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
-const KanbanBoard = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  width: 100%;
-  height: calc(100% - 9.5rem);
-  overflow-y: scroll;
-`;
-
-const Column = styled.div`
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: #f8f9fa;
+const TodoList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  height: calc((100% - 1rem) / 2); /* Ensures columns take equal height */
-`;
-
-const Task = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 4px 8px;
   gap: 8px;
 
-  &:hover {
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  /* 스크롤 커스텀 */
+  &::-webkit-scrollbar {
+    width: 6px; /* 스크롤바 너비 */
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1; /* 스크롤바 배경 */
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #bbb; /* 스크롤 핸들 색상 */
+    border-radius: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #888; /* 호버 시 색상 변경 */
   }
 `;
 
-const Checkbox = styled.input`
-  width: 20px;
-  height: 20px;
+const TodoItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+`;
+
+const TodoCheckbox = styled.input`
   cursor: pointer;
+`;
+
+const TodoText = styled.span`
+  flex: 1;
+  cursor: pointer;
+`;
+
+const TodoEditInput = styled.input`
+  flex: 1;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 `;
