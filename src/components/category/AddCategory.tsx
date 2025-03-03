@@ -15,7 +15,7 @@ export const AddCategory = () => {
 
     const newCategory = {
       id: Date.now(),
-      value,
+      name: value,
     };
     addCategory(newCategory);
 
