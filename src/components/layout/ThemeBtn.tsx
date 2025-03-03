@@ -16,14 +16,8 @@ export const ThemeBtn = () => {
 };
 
 const Button = styled.button`
-  position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
-  width: 50px;
-  height: 50px;
-  padding: 0;
-  border-radius: 50%;
-  background: white;
+  background: #f1f1f1;
+  padding: 0.5rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
@@ -34,18 +28,5 @@ const Button = styled.button`
 
   &:hover {
     box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-  }
-
-  @media (max-width: 1024px) {
-    position: static;
-    position: static;
-    width: auto;
-    height: auto;
-    border-radius: unset;
-    box-shadow: none;
-
-    &:hover {
-      box-shadow: none;
-    }
   }
 `;
