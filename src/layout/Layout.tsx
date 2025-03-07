@@ -36,8 +36,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
 const MainContainer = styled.main`
   position: relative;
-  width: 100%;
+  max-width: 1024px;
+  width: auto;
   height: 100%;
+  padding: 0 2rem;
+  margin: 0 auto;
 `;
 
 const AuthWrapper = styled.div`
@@ -47,7 +50,7 @@ const AuthWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #8daece;
+  background: #bfd6ec;
 `;
 
 const AuthContainer = styled.main`
@@ -57,9 +60,9 @@ const AuthContainer = styled.main`
   width: 400px;
   height: 500px;
   margin: 0 auto;
-  padding: 2rem 3rem;
+  padding: 2rem;
   background: white;
   border-radius: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 `;
