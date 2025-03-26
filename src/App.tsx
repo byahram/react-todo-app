@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Route, Routes } from "react-router-dom";
+import TodoPage from "./pages/TodoPage";
+import GlobalStyle from "./GlobalStyle";
+import { useCallback, useEffect } from "react";
+import api from "./utils/api";
+import { useTodoAppStore } from "./utils/zustand";
+import Layout from "./layout/Layout";
+import PrivateRoute from "./route/PrivateRoute";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const setCurrentUser = useTodoAppStore((state) => state.setCurrentUser);
+
+  const getUser = useCallback(async () => {
+    try {
+      const token = sessionStorage.getItem("token");
+      if (token) {
+        const response = await api.get("/users/getUser");
+        console.log("setCurrentUser : ", response.data.user);
+        setCurrentUser(response.data.user);
+      }
+    } catch (error) {
+      console.error("Error occurred while fetching getUser : ", error);
+      setCurrentUser(null);
+    }
+  }, [setCurrentUser]);
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <GlobalStyle />
+      <Layout>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <TodoPage />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </Layout>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
